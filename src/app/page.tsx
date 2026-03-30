@@ -167,7 +167,7 @@ export default function Calculator() {
               <tr className="border-b border-[#f9fafb]">
                 <td className="py-5">
                   <p className="font-bold text-sm">Plan Base de Conversaciones</p>
-                  <p className="text-xs text-[#6b7280] italic">Tarifa aplicada: ${result.base.rate}/conv</p>
+                  <p className="text-xs text-[#6b7280] italic">Tarifa aplicada: ${result.base.rate.toFixed(2)}/conv</p>
                 </td>
                 <td className="py-5 text-sm text-center">{state.conversations.toLocaleString()}</td>
                 <td className="py-5 text-sm font-bold text-right">{formatCurrency(result.base.subtotal)}</td>
@@ -208,13 +208,20 @@ export default function Calculator() {
                   * {COUPONS[result.discount.code as keyof typeof COUPONS]?.message}
                 </p>
               )}
+              {result.couponExpiresAt && (
+                <div className="mt-4 p-3 border-2 border-[#dc2626] rounded-lg text-center">
+                  <p className="text-[11px] font-black text-[#dc2626] uppercase tracking-wide">
+                    Oferta válida hasta: {result.couponExpiresAt.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })} {result.couponExpiresAt.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
           <div className="mt-auto border-t border-[#e5e7eb] pt-8">
             <h4 className="text-xs font-bold uppercase tracking-widest mb-4 text-[#111827]">Términos y Condiciones</h4>
             <ul className="text-[10px] text-[#4b5563] space-y-2 leading-relaxed">
-              <li>1. Este presupuesto tiene una validez de 7 días naturales a partir de su emisión.</li>
+              <li>1. Este presupuesto tiene una validez de {result.couponExpiresAt ? '48 horas' : '7 días naturales'} a partir de su emisión.</li>
               <li>2. Los precios están expresados en Dólares Estadounidenses (USD).</li>
               <li>3. El servicio se factura de forma mensual y prepaga.</li>
               <li>4. Chatsell garantiza un uptime del 99.9% en sus servicios de automatización.</li>
@@ -266,7 +273,7 @@ export default function Calculator() {
             <div className="space-y-6">
               <div className="flex justify-between items-end">
                 <span className="text-3xl font-bold">{state.conversations.toLocaleString()}</span>
-                <span className="text-blue-400 font-medium">USD {result.base.rate} / conv</span>
+                <span className="text-blue-400 font-medium">USD {result.base.rate.toFixed(2)} / conv</span>
               </div>
               <input
                 type="range"
@@ -525,6 +532,16 @@ export default function Calculator() {
                     <Percent size={14} />
                     <span className="flex-1">Cupón <strong>{result.discount.code}</strong> aplicado</span>
                     <span>-{formatCurrency(result.discount.amount)}</span>
+                  </motion.div>
+                )}
+
+                {result.couponExpiresAt && (
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="bg-red-500/10 text-red-400 p-3 rounded-lg text-xs text-center font-bold"
+                  >
+                    Oferta válida hasta {result.couponExpiresAt.toLocaleDateString('es-AR')} {result.couponExpiresAt.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                   </motion.div>
                 )}
 

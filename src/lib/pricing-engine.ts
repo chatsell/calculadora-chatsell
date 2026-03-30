@@ -1,4 +1,4 @@
-import { CONVERSATION_TIERS, EXTRAS_CONFIG, COUPONS } from "@/config/pricing-config";
+import { CONVERSATION_TIERS, EXTRAS_CONFIG, COUPONS, CouponConfig } from "@/config/pricing-config";
 
 export interface CalculatorState {
     conversations: number;
@@ -36,17 +36,33 @@ export interface CalculationResult {
         amount: number;
     } | null;
     total: number;
+    couponExpiresAt: Date | null;
 }
 
-export function getConversationRate(n: number): number {
-    const tier = CONVERSATION_TIERS.find((t) => n >= t.min);
-    return tier ? tier.rate : CONVERSATION_TIERS[CONVERSATION_TIERS.length - 1].rate;
+// Graduated pricing: calculates total by applying each tier's rate
+// only to the conversations within that bracket (like tax brackets)
+export function calculateGraduatedBase(n: number): { total: number; avgRate: number } {
+    let total = 0;
+    let remaining = n;
+
+    // Tiers must be sorted by min descending
+    const sorted = [...CONVERSATION_TIERS].sort((a, b) => b.min - a.min);
+
+    for (const tier of sorted) {
+        if (remaining > tier.min) {
+            const slice = remaining - tier.min;
+            total += slice * tier.rate;
+            remaining = tier.min;
+        }
+    }
+
+    const avgRate = n > 0 ? total / n : 0;
+    return { total, avgRate };
 }
 
 export function calculatePricing(state: CalculatorState): CalculationResult {
-    // 1. Base Calculation
-    const rate = getConversationRate(state.conversations);
-    const baseSubtotal = state.conversations * rate;
+    // 1. Base Calculation (graduated)
+    const { total: baseSubtotal, avgRate: rate } = calculateGraduatedBase(state.conversations);
 
     // 2. Extras Breakdown
     const extrasBreakdown: BreakdownItem[] = [];
@@ -125,12 +141,13 @@ export function calculatePricing(state: CalculatorState): CalculationResult {
     }
 
     const extrasSubtotal = extrasBreakdown.reduce((sum, item) => sum + item.subtotal, 0);
-    const subtotal = baseSubtotal + extrasSubtotal;
+    let subtotal = baseSubtotal + extrasSubtotal;
 
     // 3. Discount
     let discount = null;
+    let couponExpiresAt: Date | null = null;
     const upperCode = state.couponCode.toUpperCase();
-    const coupon = COUPONS[upperCode as keyof typeof COUPONS];
+    const coupon: CouponConfig | undefined = COUPONS[upperCode];
 
     if (coupon && coupon.isValid()) {
         const amount = subtotal * coupon.discount;
@@ -139,6 +156,10 @@ export function calculatePricing(state: CalculatorState): CalculationResult {
             percentage: coupon.discount,
             amount: amount,
         };
+
+        if (coupon.expiresInHours) {
+            couponExpiresAt = new Date(Date.now() + coupon.expiresInHours * 60 * 60 * 1000);
+        }
     }
 
     const total = subtotal - (discount?.amount || 0);
@@ -152,5 +173,6 @@ export function calculatePricing(state: CalculatorState): CalculationResult {
         subtotal,
         discount,
         total,
+        couponExpiresAt,
     };
 }

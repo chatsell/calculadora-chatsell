@@ -3,12 +3,13 @@ export interface PricingTier {
   rate: number;
 }
 
+// Graduated pricing: each tier defines the marginal rate for conversations
+// from this tier's min up to the next tier's min (like tax brackets)
 export const CONVERSATION_TIERS: PricingTier[] = [
-  { min: 10000, rate: 0.12 },
-  { min: 6000, rate: 0.16 },
-  { min: 3000, rate: 0.20 },
-  { min: 1000, rate: 0.40 },
-  { min: 0, rate: 0.40 }, // Default for < 1000
+  { min: 6000, rate: 0.06 },   // 6001+ at $0.06/conv
+  { min: 3000, rate: 0.12 },   // 3001-6000 at $0.12/conv
+  { min: 1000, rate: 0.05 },   // 1001-3000 at $0.05/conv
+  { min: 0, rate: 0.50 },      // 0-1000 at $0.50/conv
 ];
 
 export const EXTRAS_CONFIG = {
@@ -48,7 +49,14 @@ export const EXTRAS_CONFIG = {
   },
 };
 
-export const COUPONS = {
+export interface CouponConfig {
+  discount: number;
+  expiresInHours?: number; // Displayed expiry for urgency
+  isValid: () => boolean;
+  message: string;
+}
+
+export const COUPONS: Record<string, CouponConfig> = {
   RODOLFO: {
     discount: 0.20,
     isValid: () => {
@@ -69,5 +77,21 @@ export const COUPONS = {
       return true;
     },
     message: "10% de descuento Abonando en la semana",
-  }
+  },
+  RODO48: {
+    discount: 0.20,
+    expiresInHours: 48,
+    isValid: () => {
+      return true;
+    },
+    message: "20% OFF exclusivo - Válido por 48hs",
+  },
+  RODO48PLUS: {
+    discount: 0.45,
+    expiresInHours: 48,
+    isValid: () => {
+      return true;
+    },
+    message: "45% OFF exclusivo - Válido por 48hs",
+  },
 };
