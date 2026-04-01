@@ -93,9 +93,9 @@ export default function Calculator() {
       });
 
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfWidth = 210; // A4 width in mm
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pdf = new jsPDF('p', 'mm', [pdfWidth, pdfHeight]);
 
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
 
@@ -122,114 +122,304 @@ export default function Calculator() {
 
   return (
     <main className="min-h-screen py-12 px-4 md:px-8 max-w-6xl mx-auto">
-      {/* Hidden Printable Section */}
+      {/* Hidden Printable Section - New Professional Format */}
       <div className="pdf-hidden">
         <div
           ref={printableRef}
           id="printable-quote"
-          className="p-12 bg-[#ffffff] text-[#000000] min-h-[1100px] w-[800px]"
+          style={{ width: '800px', background: '#ffffff', fontFamily: "'Golos Text', sans-serif", color: '#111827', margin: 0, padding: 0 }}
         >
-          {/* Header */}
-          <div className="flex justify-between items-start mb-12 bg-[#0f0f0f] -m-12 p-12 mb-8">
-            <div>
-              <img src="/logo.png" alt="Chatsell" className="h-10 mb-2" />
-              <p className="text-[#9ca3af] text-xs">Automatización Inteligente para tu Negocio</p>
+          {/* 1. HEADER */}
+          <div style={{ background: '#0F172A', borderBottom: '2.5px solid #3B82F6', padding: '14px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M5 7C5 5.34 6.34 4 8 4h8c1.66 0 3 1.34 3 3v6c0 1.66-1.34 3-3 3h-2l-4 3.5V16H8c-1.66 0-3-1.34-3-3V7z" fill="white" opacity="0.45"/>
+                <path d="M13 12c-1.66 0-3 1.34-3 3v6c0 1.66 1.34 3 3 3h2v3.5l4-3.5h5c1.66 0 3-1.34 3-3v-6c0-1.66-1.34-3-3-3H13z" fill="white"/>
+              </svg>
+              <span style={{ color: 'white', fontSize: '24px', fontWeight: 700, letterSpacing: '-0.5px' }}>chatsell</span>
             </div>
-            <div className="text-right">
-              <h2 className="text-[#ffffff] text-xl font-bold tracking-tight">
-                PRESUPUESTO {clientName ? `- ${clientName.toUpperCase()}` : ''}
-              </h2>
-              <p className="text-[#6b7280] text-xs mt-1 lowercase">chatsell.net</p>
-            </div>
-          </div>
-
-          <div className="flex justify-between mb-12 px-2">
-            <div>
-              <h3 className="text-[#6b7280] uppercase text-[10px] font-bold tracking-widest mb-2">Detalles del Presupuesto</h3>
-              <p className="text-sm font-bold">Fecha: {mounted ? dateStr : ''}</p>
-              <p className="text-sm">Hora: {mounted ? timeStr : ''}</p>
-            </div>
-            <div className="text-right">
-              <h3 className="text-[#6b7280] uppercase text-[10px] font-bold tracking-widest mb-2">ID de Seguimiento</h3>
-              <p className="text-sm font-mono text-[#2563eb]">{mounted ? trackingId : 'CS-...'}</p>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ color: '#94A3B8', fontSize: '11px', marginBottom: '2px' }}>chatsell.net</div>
+              <div style={{ color: 'white', fontSize: '13px', fontWeight: 700 }}>Automatizacion Inteligente</div>
+              <div style={{ color: '#94A3B8', fontSize: '12px' }}>para tu Negocio</div>
             </div>
           </div>
 
-          <table className="w-full mb-12 border-collapse">
-            <thead>
-              <tr className="border-b-2 border-[#f3f4f6] text-left">
-                <th className="py-4 text-xs font-bold uppercase tracking-wider text-[#6b7280]">Descripción</th>
-                <th className="py-4 text-xs font-bold uppercase tracking-wider text-[#6b7280] text-center">Cantidad</th>
-                <th className="py-4 text-xs font-bold uppercase tracking-wider text-[#6b7280] text-right">Monto</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-[#f9fafb]">
-                <td className="py-5">
-                  <p className="font-bold text-sm">Plan Base de Conversaciones</p>
-                  <p className="text-xs text-[#6b7280] italic">Tarifa aplicada: ${result.base.rate.toFixed(2)}/conv</p>
-                </td>
-                <td className="py-5 text-sm text-center">{state.conversations.toLocaleString()}</td>
-                <td className="py-5 text-sm font-bold text-right">{formatCurrency(result.base.subtotal)}</td>
-              </tr>
-              {result.extrasBreakdown.map((item, idx) => (
-                <tr key={idx} className="border-b border-[#f9fafb]">
-                  <td className="py-5">
-                    <p className="font-bold text-sm">{item.label}</p>
-                    {item.unitPrice && <p className="text-xs text-[#6b7280] italic">Unitario: ${item.unitPrice}/u</p>}
-                  </td>
-                  <td className="py-5 text-sm text-center">{item.qty > 1 ? item.qty.toLocaleString() : '-'}</td>
-                  <td className="py-5 text-sm font-bold text-right">{formatCurrency(item.subtotal)}</td>
-                </tr>
+          {/* 2. PARTNERS BAR */}
+          <div style={{ background: '#F9FAFB', borderBottom: '1px solid #E5E7EB', padding: '14px 40px', textAlign: 'center' }}>
+            <div style={{ color: '#9CA3AF', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '10px' }}>PARTNERS OFICIALES</div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '60px' }}>
+              {/* OpenAI Logo */}
+              <svg width="100" height="24" viewBox="0 0 100 24" fill="none">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.86 0 3.55.68 4.88 1.78L8.24 17.54A7.96 7.96 0 014 12c0-4.42 3.58-8 8-8zm0 16a7.96 7.96 0 01-4.88-1.78l8.64-11.76A7.96 7.96 0 0120 12c0 4.42-3.58 8-8 8z" fill="#1A1A1A"/>
+                <text x="28" y="16" fontFamily="'Golos Text', sans-serif" fontSize="14" fontWeight="600" fill="#1A1A1A">OpenAI</text>
+              </svg>
+              {/* Meta Logo */}
+              <svg width="80" height="28" viewBox="0 0 80 28" fill="none">
+                <path d="M8 6c-4 0-6 4-6 8s2.5 8 6 8c2.5 0 4-1.5 6-4.5 2 3 3.5 4.5 6 4.5 3.5 0 6-4 6-8s-2-8-6-8c-2.5 0-4 1.5-6 4.5C12 7.5 10.5 6 8 6zm0 3c1.5 0 2.8 1.2 4.5 4-1.7 2.8-3 4-4.5 4-2.2 0-3.5-2.8-3.5-5s1.3-3 3.5-3zm12 0c2.2 0 3.5 1 3.5 3s-1.3 5-3.5 5c-1.5 0-2.8-1.2-4.5-4 1.7-2.8 3-4 4.5-4z" fill="#0668E1"/>
+                <text x="32" y="18" fontFamily="'Golos Text', sans-serif" fontSize="14" fontWeight="700" fill="#0668E1">Meta</text>
+              </svg>
+            </div>
+          </div>
+
+          {/* 3. TITULO Y DATOS DEL PRESUPUESTO */}
+          <div style={{ padding: '28px 40px 0 40px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+              <div>
+                <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#111827', margin: 0 }}>PRESUPUESTO</h1>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ color: '#6B7280', fontSize: '11px', marginBottom: '2px' }}>Preparado para</div>
+                <div style={{ fontSize: '20px', fontWeight: 700, color: '#111827' }}>{clientName ? clientName.toUpperCase() : ''}</div>
+              </div>
+            </div>
+            {/* 4 metric cards */}
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '28px' }}>
+              <div style={{ flex: 1, background: '#F9FAFB', borderRadius: '4px', borderTop: '3px solid #9CA3AF', padding: '10px 12px' }}>
+                <div style={{ color: '#9CA3AF', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>FECHA</div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{mounted ? dateStr : ''}</div>
+              </div>
+              <div style={{ flex: 1, background: '#F9FAFB', borderRadius: '4px', borderTop: '3px solid #9CA3AF', padding: '10px 12px' }}>
+                <div style={{ color: '#9CA3AF', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>HORA</div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{mounted ? timeStr : ''}</div>
+              </div>
+              <div style={{ flex: 1, background: '#F9FAFB', borderRadius: '4px', borderTop: '3px solid #3B82F6', padding: '10px 12px' }}>
+                <div style={{ color: '#9CA3AF', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>ID SEGUIMIENTO</div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#3B82F6' }}>{mounted ? trackingId : 'CS-...'}</div>
+              </div>
+              <div style={{ flex: 1, background: '#F9FAFB', borderRadius: '4px', borderTop: '3px solid #F59E0B', padding: '10px 12px' }}>
+                <div style={{ color: '#9CA3AF', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>VALIDEZ</div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#F59E0B' }}>7 dias</div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. DETALLE DEL SERVICIO */}
+          <div style={{ padding: '0 40px 24px 40px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+              <div style={{ width: '3.5px', height: '20px', background: '#3B82F6', borderRadius: '2px' }} />
+              <h2 style={{ fontSize: '15px', fontWeight: 700, textTransform: 'uppercase', color: '#111827', margin: 0, letterSpacing: '0.5px' }}>DETALLE DEL SERVICIO</h2>
+            </div>
+            <p style={{ fontSize: '12px', color: '#6B7280', marginLeft: '14px', marginBottom: '16px', marginTop: '2px' }}>Automatizacion multicanal con inteligencia artificial</p>
+            <div style={{ borderTop: '1px solid #E5E7EB' }}>
+              {[
+                { name: 'WhatsApp Business', desc: 'Automatizacion completa de respuestas, seguimiento y cierre de ventas.' },
+                { name: 'Instagram DM', desc: 'Respuestas automaticas a mensajes directos. Convierte seguidores en clientes.' },
+                { name: 'Facebook Messenger', desc: 'Atencion automatizada via tu pagina de Facebook. Respuestas 24/7.' },
+                { name: 'Web Chat', desc: 'Widget embebido en tu sitio web. Captura leads en tiempo real.' },
+              ].map((channel, i) => (
+                <div key={i} style={{ display: 'flex', padding: '10px 0', borderBottom: '1px solid #E5E7EB', background: i % 2 === 0 ? '#F9FAFB' : 'white' }}>
+                  <div style={{ width: '180px', fontWeight: 700, fontSize: '12px', color: '#111827', padding: '0 12px' }}>{channel.name}</div>
+                  <div style={{ flex: 1, fontSize: '12px', color: '#4B5563', padding: '0 12px' }}>{channel.desc}</div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
 
-          <div className="flex justify-end mb-24 pr-2">
-            <div className="w-72 space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-[#6b7280]">Subtotal</span>
-                <span className="font-bold">{formatCurrency(result.subtotal)}</span>
+          {/* 5. DESGLOSE DE INVERSION */}
+          <div style={{ padding: '0 40px 24px 40px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <div style={{ width: '3.5px', height: '20px', background: '#3B82F6', borderRadius: '2px' }} />
+              <h2 style={{ fontSize: '15px', fontWeight: 700, textTransform: 'uppercase', color: '#111827', margin: 0, letterSpacing: '0.5px' }}>DESGLOSE DE INVERSION</h2>
+            </div>
+            {/* Table header */}
+            <div style={{ display: 'flex', background: '#0F172A', color: 'white', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '10px 14px', borderRadius: '4px 4px 0 0' }}>
+              <div style={{ flex: 2 }}>DESCRIPCION</div>
+              <div style={{ flex: 1, textAlign: 'center' }}>TARIFA</div>
+              <div style={{ flex: 1, textAlign: 'center' }}>CANTIDAD</div>
+              <div style={{ flex: 1, textAlign: 'right' }}>MONTO</div>
+            </div>
+            {/* Base plan row */}
+            <div style={{ display: 'flex', padding: '14px', borderBottom: '1px solid #E5E7EB', alignItems: 'center' }}>
+              <div style={{ flex: 2 }}>
+                <div style={{ fontWeight: 700, fontSize: '13px', color: '#111827' }}>Plan Base de Conversaciones</div>
+                <div style={{ fontSize: '11px', color: '#6B7280' }}>Conversaciones automatizadas con IA en todos los canales</div>
+              </div>
+              <div style={{ flex: 1, textAlign: 'center', fontSize: '13px', color: '#374151' }}>${result.base.rate.toFixed(2)}/conv</div>
+              <div style={{ flex: 1, textAlign: 'center', fontSize: '13px', color: '#374151' }}>{state.conversations.toLocaleString()}</div>
+              <div style={{ flex: 1, textAlign: 'right', fontSize: '13px', fontWeight: 700, color: '#111827' }}>{formatCurrency(result.base.subtotal)}</div>
+            </div>
+            {/* Extra rows */}
+            {result.extrasBreakdown.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', padding: '12px 14px', borderBottom: '1px solid #E5E7EB', alignItems: 'center', background: idx % 2 === 0 ? '#F9FAFB' : 'white' }}>
+                <div style={{ flex: 2 }}>
+                  <div style={{ fontWeight: 700, fontSize: '13px', color: '#111827' }}>{item.label}</div>
+                </div>
+                <div style={{ flex: 1, textAlign: 'center', fontSize: '13px', color: '#374151' }}>
+                  {item.unitPrice ? `$${item.unitPrice}/u` : '-'}
+                </div>
+                <div style={{ flex: 1, textAlign: 'center', fontSize: '13px', color: '#374151' }}>
+                  {item.qty > 1 ? item.qty.toLocaleString() : '-'}
+                </div>
+                <div style={{ flex: 1, textAlign: 'right', fontSize: '13px', fontWeight: 700, color: '#111827' }}>{formatCurrency(item.subtotal)}</div>
+              </div>
+            ))}
+            {/* Subtotal, Discount, Total */}
+            <div style={{ marginTop: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '6px 14px' }}>
+                <div style={{ width: '260px', display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                  <span style={{ color: '#374151' }}>Subtotal</span>
+                  <span style={{ fontWeight: 700, color: '#111827' }}>{formatCurrency(result.subtotal)}</span>
+                </div>
               </div>
               {result.discount && (
-                <div className="flex justify-between text-sm text-[#16a34a]">
-                  <span>Descuento ({result.discount.code})</span>
-                  <span className="font-bold">-{formatCurrency(result.discount.amount)}</span>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '6px 14px' }}>
+                  <div style={{ width: '260px', display: 'flex', justifyContent: 'space-between', fontSize: '13px', alignItems: 'center' }}>
+                    <span style={{ color: '#374151' }}>
+                      Descuento<br/>
+                      <span style={{ fontSize: '11px' }}>({result.discount.code})</span><br/>
+                      <span style={{ color: '#10B981', fontWeight: 700 }}>-{(result.discount.percentage * 100).toFixed(0)}%</span>
+                    </span>
+                    <span style={{ fontWeight: 700, color: '#10B981' }}>-{formatCurrency(result.discount.amount)}</span>
+                  </div>
                 </div>
               )}
-              <div className="pt-4 border-t-2 border-[#111827] flex justify-between items-end">
-                <span className="text-xs font-black uppercase tracking-tighter">Total Mensual</span>
-                <span className="text-2xl font-black text-[#2563eb] leading-none">
-                  {formatCurrency(result.total)}
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 14px', marginTop: '8px' }}>
+                <div style={{ width: '260px', borderTop: '3px solid #0F172A', background: '#ECFDF5', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '0 0 4px 4px' }}>
+                  <span style={{ fontWeight: 900, fontSize: '13px', textTransform: 'uppercase', color: '#0F172A' }}>TOTAL<br/>MENSUAL</span>
+                  <span>
+                    <span style={{ fontSize: '22px', fontWeight: 900, color: '#059669' }}>{formatCurrency(result.total)}</span>
+                    <span style={{ fontSize: '12px', color: '#6B7280', marginLeft: '4px' }}>USD</span>
+                  </span>
+                </div>
               </div>
               {result.discount && (
-                <p className="text-[10px] text-right text-[#9ca3af] italic mt-2">
-                  * {COUPONS[result.discount.code as keyof typeof COUPONS]?.message}
-                </p>
-              )}
-              {result.couponExpiresAt && (
-                <div className="mt-4 p-3 border-2 border-[#dc2626] rounded-lg text-center">
-                  <p className="text-[11px] font-black text-[#dc2626] uppercase tracking-wide">
-                    Oferta válida hasta: {result.couponExpiresAt.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })} {result.couponExpiresAt.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
-                  </p>
+                <div style={{ textAlign: 'right', padding: '8px 14px 0 0' }}>
+                  <span style={{ fontSize: '10px', color: '#10B981', fontStyle: 'italic', fontWeight: 600 }}>
+                    * Descuento del {(result.discount.percentage * 100).toFixed(0)}% con codigo {result.discount.code}. Oferta por tiempo limitado.
+                  </span>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="mt-auto border-t border-[#e5e7eb] pt-8">
-            <h4 className="text-xs font-bold uppercase tracking-widest mb-4 text-[#111827]">Términos y Condiciones</h4>
-            <ul className="text-[10px] text-[#4b5563] space-y-2 leading-relaxed">
-              <li>1. Este presupuesto tiene una validez de {result.couponExpiresAt ? '48 horas' : '7 días naturales'} a partir de su emisión.</li>
-              <li>2. Los precios están expresados en Dólares Estadounidenses (USD).</li>
-              <li>3. El servicio se factura de forma mensual y prepaga.</li>
-              <li>4. Chatsell garantiza un uptime del 99.9% en sus servicios de automatización.</li>
-              <li>5. Los agentes y líneas adicionales se ajustan proporcionalmente si se solicitan a mitad del ciclo.</li>
-            </ul>
-            <p className="text-center text-[9px] text-[#9ca3af] mt-12 italic">
-              Este es un presupuesto informativo generado automáticamente por el sistema de Chatsell.
+          {/* 6. QUE INCLUYE TU PLAN */}
+          <div style={{ padding: '8px 40px 24px 40px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <div style={{ width: '3.5px', height: '20px', background: '#10B981', borderRadius: '2px' }} />
+              <h2 style={{ fontSize: '15px', fontWeight: 700, textTransform: 'uppercase', color: '#111827', margin: 0, letterSpacing: '0.5px' }}>QUE INCLUYE TU PLAN</h2>
+            </div>
+            <div style={{ display: 'flex', gap: '24px' }}>
+              {/* Left column */}
+              <div style={{ flex: 1 }}>
+                {[
+                  { title: 'Conversaciones con IA', desc: `Hasta ${state.conversations.toLocaleString()} conversaciones automatizadas al mes en todos tus canales.` },
+                  { title: 'Onboarding Asistido', desc: 'Configuracion completa: personalizacion del bot, integracion de canales y capacitacion.' },
+                  { title: 'Soporte Dedicado via WhatsApp', desc: 'Lunes a viernes de 9 a 18hs. Una persona dedicada exclusivamente a tu cuenta.' },
+                  { title: 'CRM Integrado', desc: 'Gestion de contactos, historial de conversaciones, etiquetas y seguimiento de cada cliente desde la plataforma.' },
+                ].map((item, i) => (
+                  <div key={i} style={{ padding: '10px 0', borderBottom: '1px solid #E5E7EB' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <span style={{ color: '#10B981', fontWeight: 700, fontSize: '14px', lineHeight: '18px' }}>&#10003;</span>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '12px', color: '#111827', marginBottom: '2px' }}>{item.title}</div>
+                        <div style={{ fontSize: '11px', color: '#6B7280', lineHeight: '1.4' }}>{item.desc}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Right column */}
+              <div style={{ flex: 1 }}>
+                {[
+                  { title: 'Panel de Analiticas', desc: 'Metricas de conversaciones, tasas de respuesta y reportes exportables en tiempo real.' },
+                  { title: 'Actualizaciones', desc: 'Acceso a mejoras y nuevas funcionalidades sin costo adicional durante tu suscripcion.' },
+                  { title: 'Multicanal Unificado', desc: 'WhatsApp, Instagram, Messenger y Web Chat gestionados desde una sola plataforma.' },
+                ].map((item, i) => (
+                  <div key={i} style={{ padding: '10px 0', borderBottom: '1px solid #E5E7EB' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                      <span style={{ color: '#10B981', fontWeight: 700, fontSize: '14px', lineHeight: '18px' }}>&#10003;</span>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '12px', color: '#111827', marginBottom: '2px' }}>{item.title}</div>
+                        <div style={{ fontSize: '11px', color: '#6B7280', lineHeight: '1.4' }}>{item.desc}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 7. PREGUNTAS FRECUENTES */}
+          <div style={{ padding: '8px 40px 24px 40px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <div style={{ width: '3.5px', height: '20px', background: '#1E293B', borderRadius: '2px' }} />
+              <h2 style={{ fontSize: '15px', fontWeight: 700, textTransform: 'uppercase', color: '#111827', margin: 0, letterSpacing: '0.5px' }}>PREGUNTAS FRECUENTES</h2>
+            </div>
+            <div style={{ borderTop: '1px solid #E5E7EB' }}>
+              {[
+                { q: 'Como funciona el cobro por conversacion?', a: 'Cada interaccion completa con un usuario cuenta como una conversacion. Sin limite de mensajes internos; solo se cuenta una vez por usuario por sesion.' },
+                { q: 'Que pasa si supero el limite?', a: 'Te notificamos con anticipacion. Podras adquirir un paquete adicional a la misma tarifa o ajustar tu plan. El servicio nunca se interrumpe sin aviso.' },
+                { q: 'Cuanto tiempo toma el desarrollo?', a: 'Los desarrollos toman entre 15 y 30 dias segun la complejidad del proyecto y la rapidez de respuesta del cliente. Incluye configuracion, integracion y capacitacion.' },
+                { q: 'Puedo personalizar las respuestas?', a: 'Si. Definimos junto a vos el tono, estilo y contenido. Podes pedir ajustes en cualquier momento via soporte sin costo adicional.' },
+                { q: 'Puedo cancelar o cambiar mi plan?', a: 'Si. Facturacion mensual y prepaga. Podes cancelar, ajustar o escalar al finalizar cada ciclo sin penalidades.' },
+                { q: 'Como protegen los datos?', a: 'Encriptacion de extremo a extremo. La informacion de tus clientes nunca se comparte con terceros ni se usa para otros fines.' },
+              ].map((faq, i) => (
+                <div key={i} style={{ display: 'flex', padding: '10px 0', borderBottom: '1px solid #E5E7EB', background: i % 2 === 0 ? '#F9FAFB' : 'white' }}>
+                  <div style={{ width: '33%', padding: '0 12px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                    <span style={{ display: 'inline-block', width: '8px', height: '8px', minWidth: '8px', borderRadius: '50%', background: '#3B82F6', marginTop: '4px' }} />
+                    <span style={{ fontWeight: 700, fontSize: '11px', color: '#111827' }}>{faq.q}</span>
+                  </div>
+                  <div style={{ width: '67%', padding: '0 12px', fontSize: '11px', color: '#4B5563', lineHeight: '1.5', textAlign: 'justify' }}>{faq.a}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 8. GARANTIAS Y COMPROMISOS */}
+          <div style={{ padding: '8px 40px 24px 40px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <div style={{ width: '3.5px', height: '20px', background: '#10B981', borderRadius: '2px' }} />
+              <h2 style={{ fontSize: '15px', fontWeight: 700, textTransform: 'uppercase', color: '#111827', margin: 0, letterSpacing: '0.5px' }}>GARANTIAS Y COMPROMISOS</h2>
+            </div>
+            <div style={{ display: 'flex', gap: '0', border: '1px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden' }}>
+              {[
+                { color: '#10B981', title: '99.9% Uptime', desc: 'Disponibilidad garantizada.' },
+                { color: '#3B82F6', title: 'Soporte WhatsApp', desc: 'Lun a Vie 9-18hs. Persona dedicada.' },
+                { color: '#F59E0B', title: 'Sin Permanencia', desc: 'Sin contratos ni clausulas de salida.' },
+                { color: '#0F172A', title: 'Seguridad Total', desc: 'Encriptacion extremo a extremo.' },
+              ].map((g, i) => (
+                <div key={i} style={{ flex: 1, background: '#F9FAFB', padding: '16px 12px', textAlign: 'center', borderRight: i < 3 ? '1px solid #E5E7EB' : 'none' }}>
+                  <div style={{ display: 'inline-block', width: '10px', height: '10px', background: g.color, borderRadius: '2px', marginBottom: '8px' }} />
+                  <div style={{ fontWeight: 700, fontSize: '12px', color: '#111827', marginBottom: '4px' }}>{g.title}</div>
+                  <div style={{ fontSize: '10px', color: '#6B7280', lineHeight: '1.4' }}>{g.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 9. TERMINOS Y CONDICIONES */}
+          <div style={{ padding: '8px 40px 24px 40px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+              <div style={{ width: '3.5px', height: '20px', background: '#9CA3AF', borderRadius: '2px' }} />
+              <h2 style={{ fontSize: '15px', fontWeight: 700, textTransform: 'uppercase', color: '#111827', margin: 0, letterSpacing: '0.5px' }}>TERMINOS Y CONDICIONES</h2>
+            </div>
+            <p style={{ fontSize: '10px', color: '#6B7280', lineHeight: '1.6', margin: 0 }}>
+              <strong>1.</strong> Presupuesto valido por 7 dias desde la emision. Precios en USD. <strong>2.</strong> Facturacion mensual y prepaga. Ciclo desde la activacion del servicio. <strong>3.</strong> Uptime garantizado del 99.9%. Credito proporcional en caso de incumplimiento. <strong>4.</strong> Desarrollo e implementacion: 15 a 30 dias segun complejidad y respuesta del cliente. <strong>5.</strong> Tarifas modificables con 30 dias de aviso. Cancelacion: 5 dias antes del siguiente ciclo. <strong>6.</strong> El cliente debe proveer accesos a sus canales para la correcta integracion.
             </p>
+          </div>
+
+          {/* 10. CTA */}
+          <div style={{ padding: '0 40px 16px 40px' }}>
+            <div style={{ background: '#ECFDF5', border: '1px solid #10B981', borderRadius: '6px', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '15px', color: '#111827', marginBottom: '4px' }}>Listo para automatizar tu negocio?</div>
+                <div style={{ fontSize: '12px', color: '#4B5563' }}>Contactanos para activar tu plan. Respuesta inmediata por WhatsApp.</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontWeight: 700, fontSize: '14px', color: '#059669', marginBottom: '2px' }}>WhatsApp: +54 9 351 737 3811</div>
+                <div style={{ fontSize: '11px', color: '#6B7280' }}>Instagram: @chatsellapp | Web: chatsell.net</div>
+              </div>
+            </div>
+            <p style={{ textAlign: 'center', fontSize: '9px', color: '#9CA3AF', fontStyle: 'italic', marginTop: '10px' }}>
+              Presupuesto informativo generado por Chatsell. Para confirmar, comunicate con nuestro equipo comercial.
+            </p>
+          </div>
+
+          {/* 11. FOOTER */}
+          <div style={{ background: '#0F172A', borderTop: '2px solid #3B82F6', padding: '16px 40px', textAlign: 'center' }}>
+            <div style={{ color: 'white', fontWeight: 700, fontSize: '12px', marginBottom: '6px' }}>Chatsell | Automatizacion Inteligente para tu Negocio</div>
+            <div style={{ color: '#94A3B8', fontSize: '10px' }}>WhatsApp: +54 9 351 737 3811 / +54 9 351 747 5321 | Instagram: @chatsellapp | Web: chatsell.net</div>
           </div>
         </div>
       </div>

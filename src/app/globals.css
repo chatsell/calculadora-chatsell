@@ -141,5 +141,9 @@ input:checked+.slider:before {
   z-index: -100;
   visibility: hidden;
   width: 800px;
-  /* Base width for capture */
+}
+
+@media print {
+  @page { margin: 0; size: 595px auto; }
+  body { margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
